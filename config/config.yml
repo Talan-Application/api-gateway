@@ -1,0 +1,15 @@
+app:
+    name: api-gateway
+    env: ${APP_ENV}
+
+server:
+    httpserver:
+        port: ${HTTP_PORT}
+        readtimeout: ${HTTP_READ_TIMEOUT}
+        writetimeout: ${HTTP_WRITE_TIMEOUT}
+        idletimeout: ${HTTP_IDLE_TIMEOUT}
+        maxheaderbytes: ${HTTP_MAX_HEADER_BYTES}
+
+services:
+    auth:
+        address: ${AUTH_SERVICE_ADDR}
