@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -43,15 +44,18 @@ type ServiceConfig struct {
 func Load() (*Config, error) {
 	_ = godotenv.Load(".env")
 
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath("./config")
-	viper.AddConfigPath(".")
+	raw, err := os.ReadFile("./config/config.yml")
+	if err != nil {
+		return nil, fmt.Errorf("read config file: %w", err)
+	}
 
+	expanded := os.ExpandEnv(string(raw))
+
+	viper.SetConfigType("yaml")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 
-	if err := viper.ReadInConfig(); err != nil {
+	if err := viper.ReadConfig(strings.NewReader(expanded)); err != nil {
 		return nil, fmt.Errorf("read config: %w", err)
 	}
 
