@@ -10,14 +10,14 @@ import (
 
 const (
 	MaxRecvMsgSize = 12 * 1024 * 1024
-	timeKeepalive  = 10 * time.Second
+	timeKeepalive  = 30 * time.Second
 )
 
 func New(target string) (*grpc.ClientConn, error) {
 	keepaliveParams := keepalive.ClientParameters{
 		Time:                timeKeepalive,
-		Timeout:             time.Second,
-		PermitWithoutStream: true,
+		Timeout:             10 * time.Second,
+		PermitWithoutStream: false,
 	}
 
 	opts := []grpc.DialOption{
