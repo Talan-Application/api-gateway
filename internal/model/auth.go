@@ -13,6 +13,11 @@ type LoginRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
+type VerifyCodeRequest struct {
+	Email string `json:"email" binding:"required,email"`
+	Code  string `json:"code"  binding:"required,len=6"`
+}
+
 type RefreshTokenRequest struct {
 	RefreshToken string `json:"refresh_token" binding:"required"`
 }
@@ -20,4 +25,8 @@ type RefreshTokenRequest struct {
 type TokenResponse struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
+}
+
+type MessageResponse struct {
+	Message string `json:"message"`
 }

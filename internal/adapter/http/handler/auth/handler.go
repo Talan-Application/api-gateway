@@ -53,6 +53,38 @@ func (h *Handler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+func (h *Handler) VerifyEmail(c *gin.Context) {
+	var req model.VerifyCodeRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	resp, err := h.authUC.VerifyEmail(c.Request.Context(), req)
+	if err != nil {
+		h.handleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+func (h *Handler) VerifyLoginCode(c *gin.Context) {
+	var req model.VerifyCodeRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	resp, err := h.authUC.VerifyLoginCode(c.Request.Context(), req)
+	if err != nil {
+		h.handleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
 func (h *Handler) RefreshToken(c *gin.Context) {
 	var req model.RefreshTokenRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -84,6 +116,8 @@ func (h *Handler) handleError(c *gin.Context, err error) {
 		c.JSON(http.StatusNotFound, gin.H{"error": st.Message()})
 	case codes.Unauthenticated:
 		c.JSON(http.StatusUnauthorized, gin.H{"error": st.Message()})
+	case codes.FailedPrecondition:
+		c.JSON(http.StatusForbidden, gin.H{"error": st.Message()})
 	case codes.InvalidArgument:
 		c.JSON(http.StatusBadRequest, gin.H{"error": st.Message()})
 	case codes.Unavailable:
