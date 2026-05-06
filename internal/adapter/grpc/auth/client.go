@@ -17,7 +17,7 @@ func NewClient(conn *grpc.ClientConn) *Client {
 	return &Client{stub: authv1.NewAuthServiceClient(conn)}
 }
 
-func (c *Client) Register(ctx context.Context, req model.RegisterRequest) (*model.TokenResponse, error) {
+func (c *Client) Register(ctx context.Context, req model.RegisterRequest) (*model.MessageResponse, error) {
 	resp, err := c.stub.Register(ctx, &authv1.RegisterRequest{
 		Email:      req.Email,
 		Password:   req.Password,
@@ -28,14 +28,10 @@ func (c *Client) Register(ctx context.Context, req model.RegisterRequest) (*mode
 	if err != nil {
 		return nil, err
 	}
-
-	return &model.TokenResponse{
-		AccessToken:  resp.GetAccessToken(),
-		RefreshToken: resp.GetRefreshToken(),
-	}, nil
+	return &model.MessageResponse{Message: resp.GetMessage()}, nil
 }
 
-func (c *Client) Login(ctx context.Context, req model.LoginRequest) (*model.TokenResponse, error) {
+func (c *Client) Login(ctx context.Context, req model.LoginRequest) (*model.MessageResponse, error) {
 	resp, err := c.stub.Login(ctx, &authv1.LoginRequest{
 		Email:    req.Email,
 		Password: req.Password,
@@ -43,7 +39,31 @@ func (c *Client) Login(ctx context.Context, req model.LoginRequest) (*model.Toke
 	if err != nil {
 		return nil, err
 	}
+	return &model.MessageResponse{Message: resp.GetMessage()}, nil
+}
 
+func (c *Client) VerifyEmail(ctx context.Context, req model.VerifyCodeRequest) (*model.TokenResponse, error) {
+	resp, err := c.stub.VerifyEmail(ctx, &authv1.VerifyCodeRequest{
+		Email: req.Email,
+		Code:  req.Code,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &model.TokenResponse{
+		AccessToken:  resp.GetAccessToken(),
+		RefreshToken: resp.GetRefreshToken(),
+	}, nil
+}
+
+func (c *Client) VerifyLoginCode(ctx context.Context, req model.VerifyCodeRequest) (*model.TokenResponse, error) {
+	resp, err := c.stub.VerifyLoginCode(ctx, &authv1.VerifyCodeRequest{
+		Email: req.Email,
+		Code:  req.Code,
+	})
+	if err != nil {
+		return nil, err
+	}
 	return &model.TokenResponse{
 		AccessToken:  resp.GetAccessToken(),
 		RefreshToken: resp.GetRefreshToken(),
@@ -57,7 +77,6 @@ func (c *Client) RefreshToken(ctx context.Context, req model.RefreshTokenRequest
 	if err != nil {
 		return nil, err
 	}
-
 	return &model.TokenResponse{
 		AccessToken:  resp.GetAccessToken(),
 		RefreshToken: resp.GetRefreshToken(),
