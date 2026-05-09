@@ -13,3 +13,11 @@ type Auth interface {
 	VerifyLoginCode(ctx context.Context, req model.VerifyCodeRequest) (*model.TokenResponse, error)
 	RefreshToken(ctx context.Context, req model.RefreshTokenRequest) (*model.TokenResponse, error)
 }
+
+type Quiz interface {
+	CreateQuiz(ctx context.Context, req model.CreateQuizRequest) (*model.QuizResponse, error)
+	GetQuiz(ctx context.Context, id int64) (*model.QuizResponse, error)
+	GetAllQuizzes(ctx context.Context, limit, offset *int32) (*model.GetAllQuizzesResponse, error)
+	UpdateQuiz(ctx context.Context, id int64, req model.UpdateQuizRequest) (*model.QuizResponse, error)
+	DeleteQuiz(ctx context.Context, id int64) (*model.DeleteQuizResponse, error)
+}

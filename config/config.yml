@@ -13,3 +13,5 @@ server:
 services:
     auth:
         address: ${AUTH_SERVICE_ADDR}
+    quiz:
+        address: ${QUIZ_SERVICE_ADDR}
