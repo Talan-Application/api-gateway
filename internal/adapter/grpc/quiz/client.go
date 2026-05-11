@@ -5,7 +5,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	quizv1 "github.com/Talan-Application/quiz-service/gen/quiz/v1"
+	quizv1 "github.com/Talan-Application/proto-generation/quiz/v1"
 	"github.com/Talan-Application/api-gateway/internal/model"
 )
 
