@@ -12,7 +12,7 @@ import (
 	"github.com/Talan-Application/api-gateway/internal/usecase"
 )
 
-func NewRouter(env string, log *zap.Logger, authUC usecase.Auth, quizUC usecase.Quiz, questionUC usecase.Question, answerUC usecase.Answer) *gin.Engine {
+func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Auth, quizUC usecase.Quiz, questionUC usecase.Question, answerUC usecase.Answer) *gin.Engine {
 	if env != "development" {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -33,8 +33,10 @@ func NewRouter(env string, log *zap.Logger, authUC usecase.Auth, quizUC usecase.
 		authGroup.POST("/refresh", auth.RefreshToken)
 	}
 
+	protected := v1.Group("", middleware.AuthMiddleware(jwtSecret))
+
 	quiz := quizhandler.NewHandler(quizUC, log)
-	quizGroup := v1.Group("/quizzes")
+	quizGroup := protected.Group("/quizzes")
 	{
 		quizGroup.POST("", quiz.Create)
 		quizGroup.GET("", quiz.GetAll)
@@ -44,7 +46,7 @@ func NewRouter(env string, log *zap.Logger, authUC usecase.Auth, quizUC usecase.
 	}
 
 	question := questionhandler.NewHandler(questionUC, log)
-	questionGroup := v1.Group("/questions")
+	questionGroup := protected.Group("/questions")
 	{
 		questionGroup.POST("", question.Create)
 		questionGroup.GET("", question.GetAll)
@@ -54,7 +56,7 @@ func NewRouter(env string, log *zap.Logger, authUC usecase.Auth, quizUC usecase.
 	}
 
 	answer := answerhandler.NewHandler(answerUC, log)
-	answerGroup := v1.Group("/answers")
+	answerGroup := protected.Group("/answers")
 	{
 		answerGroup.POST("", answer.Create)
 		answerGroup.GET("", answer.GetAll)

@@ -14,6 +14,11 @@ type Config struct {
 	App      AppConfig      `mapstructure:"app"`
 	Server   ServerConfig   `mapstructure:"server"`
 	Services ServicesConfig `mapstructure:"services"`
+	JWT      JWTConfig      `mapstructure:"jwt"`
+}
+
+type JWTConfig struct {
+	SecretKey string `mapstructure:"secretKey"`
 }
 
 type AppConfig struct {

@@ -50,7 +50,7 @@ func New(cfg *config.Config, log *zap.Logger) (*App, error) {
 	answerClient := answergrpc.NewClient(quizConn)
 	answerUC := answerusecase.New(answerClient)
 
-	router := httpserver.NewRouter(cfg.App.Env, log, authUC, quizUC, questionUC, answerUC)
+	router := httpserver.NewRouter(cfg.App.Env, cfg.JWT.SecretKey, log, authUC, quizUC, questionUC, answerUC)
 	srv := httpserver.NewServer(cfg.Server.HTTPServer, router, log)
 
 	return &App{httpServer: srv, log: log}, nil
