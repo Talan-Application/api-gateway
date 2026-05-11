@@ -3,8 +3,7 @@ module github.com/Talan-Application/api-gateway
 go 1.25.5
 
 require (
-	github.com/Talan-Application/proto-generation v0.0.0-20260506082658-b1909c19ddab
-	github.com/Talan-Application/quiz-service v0.0.0-00010101000000-000000000000
+	github.com/Talan-Application/proto-generation v0.0.0-20260511112441-52326d7b7a34
 	github.com/gin-gonic/gin v1.12.0
 	github.com/joho/godotenv v1.5.1
 	github.com/spf13/viper v1.21.0

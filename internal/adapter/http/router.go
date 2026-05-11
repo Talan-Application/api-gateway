@@ -4,13 +4,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
+	answerhandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/answer"
 	authhandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/auth"
+	questionhandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/question"
 	quizhandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/quiz"
 	"github.com/Talan-Application/api-gateway/internal/adapter/http/middleware"
 	"github.com/Talan-Application/api-gateway/internal/usecase"
 )
 
-func NewRouter(env string, log *zap.Logger, authUC usecase.Auth, quizUC usecase.Quiz) *gin.Engine {
+func NewRouter(env string, log *zap.Logger, authUC usecase.Auth, quizUC usecase.Quiz, questionUC usecase.Question, answerUC usecase.Answer) *gin.Engine {
 	if env != "development" {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -39,6 +41,26 @@ func NewRouter(env string, log *zap.Logger, authUC usecase.Auth, quizUC usecase.
 		quizGroup.GET("/:id", quiz.GetByID)
 		quizGroup.PUT("/:id", quiz.Update)
 		quizGroup.DELETE("/:id", quiz.Delete)
+	}
+
+	question := questionhandler.NewHandler(questionUC, log)
+	questionGroup := v1.Group("/questions")
+	{
+		questionGroup.POST("", question.Create)
+		questionGroup.GET("", question.GetAll)
+		questionGroup.GET("/:id", question.GetByID)
+		questionGroup.PUT("/:id", question.Update)
+		questionGroup.DELETE("/:id", question.Delete)
+	}
+
+	answer := answerhandler.NewHandler(answerUC, log)
+	answerGroup := v1.Group("/answers")
+	{
+		answerGroup.POST("", answer.Create)
+		answerGroup.GET("", answer.GetAll)
+		answerGroup.GET("/:id", answer.GetByID)
+		answerGroup.PUT("/:id", answer.Update)
+		answerGroup.DELETE("/:id", answer.Delete)
 	}
 
 	return router

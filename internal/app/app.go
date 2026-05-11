@@ -7,11 +7,15 @@ import (
 
 	"go.uber.org/zap"
 
+	answergrpc "github.com/Talan-Application/api-gateway/internal/adapter/grpc/answer"
 	authgrpc "github.com/Talan-Application/api-gateway/internal/adapter/grpc/auth"
+	questiongrpc "github.com/Talan-Application/api-gateway/internal/adapter/grpc/question"
 	quizgrpc "github.com/Talan-Application/api-gateway/internal/adapter/grpc/quiz"
 	httpserver "github.com/Talan-Application/api-gateway/internal/adapter/http"
 	"github.com/Talan-Application/api-gateway/internal/config"
+	answerusecase "github.com/Talan-Application/api-gateway/internal/usecase/answer"
 	authusecase "github.com/Talan-Application/api-gateway/internal/usecase/auth"
+	questionusecase "github.com/Talan-Application/api-gateway/internal/usecase/question"
 	quizusecase "github.com/Talan-Application/api-gateway/internal/usecase/quiz"
 	"github.com/Talan-Application/api-gateway/pkg/grpcconn"
 )
@@ -40,7 +44,13 @@ func New(cfg *config.Config, log *zap.Logger) (*App, error) {
 	quizClient := quizgrpc.NewClient(quizConn)
 	quizUC := quizusecase.New(quizClient)
 
-	router := httpserver.NewRouter(cfg.App.Env, log, authUC, quizUC)
+	questionClient := questiongrpc.NewClient(quizConn)
+	questionUC := questionusecase.New(questionClient)
+
+	answerClient := answergrpc.NewClient(quizConn)
+	answerUC := answerusecase.New(answerClient)
+
+	router := httpserver.NewRouter(cfg.App.Env, log, authUC, quizUC, questionUC, answerUC)
 	srv := httpserver.NewServer(cfg.Server.HTTPServer, router, log)
 
 	return &App{httpServer: srv, log: log}, nil
