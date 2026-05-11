@@ -15,3 +15,6 @@ services:
         address: ${AUTH_SERVICE_ADDR}
     quiz:
         address: ${QUIZ_SERVICE_ADDR}
+
+jwt:
+    secretKey: ${JWT_SECRETKEY}
