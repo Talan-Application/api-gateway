@@ -43,6 +43,8 @@ func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Aut
 		quizGroup.GET("/:id", quiz.GetByID)
 		quizGroup.PUT("/:id", quiz.Update)
 		quizGroup.DELETE("/:id", quiz.Delete)
+		quizGroup.GET("/:id/take", quiz.TakeQuiz)
+		quizGroup.POST("/:id/submit", quiz.SubmitQuiz)
 	}
 
 	question := questionhandler.NewHandler(questionUC, log)

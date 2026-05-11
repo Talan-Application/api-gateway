@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
 	"github.com/Talan-Application/api-gateway/internal/model"
@@ -29,7 +30,9 @@ func (h *Handler) Create(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.quizUC.CreateQuiz(c.Request.Context(), req)
+	ctx := metadata.AppendToOutgoingContext(c.Request.Context(), "authorization", c.GetHeader("Authorization"))
+
+	resp, err := h.quizUC.CreateQuiz(ctx, req)
 	if err != nil {
 		h.handleError(c, err)
 		return
@@ -115,6 +118,44 @@ func (h *Handler) Delete(c *gin.Context) {
 	}
 
 	resp, err := h.quizUC.DeleteQuiz(c.Request.Context(), id)
+	if err != nil {
+		h.handleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+func (h *Handler) TakeQuiz(c *gin.Context) {
+	id, err := parseID(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	resp, err := h.quizUC.TakeQuiz(c.Request.Context(), id)
+	if err != nil {
+		h.handleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+func (h *Handler) SubmitQuiz(c *gin.Context) {
+	id, err := parseID(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	var req model.SubmitQuizRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	resp, err := h.quizUC.SubmitQuiz(c.Request.Context(), id, req)
 	if err != nil {
 		h.handleError(c, err)
 		return
