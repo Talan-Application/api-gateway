@@ -21,7 +21,6 @@ func (c *Client) CreateQuiz(ctx context.Context, req model.CreateQuizRequest) (*
 	resp, err := c.stub.CreateQuiz(ctx, &quizv1.CreateQuizRequest{
 		Title:     req.Title,
 		Language:  req.Language,
-		AuthorId:  req.AuthorID,
 		Type:      req.Type,
 		SubjectId: req.SubjectID,
 	})

@@ -20,6 +20,8 @@ type Quiz interface {
 	GetAllQuizzes(ctx context.Context, limit, offset *int32) (*model.GetAllQuizzesResponse, error)
 	UpdateQuiz(ctx context.Context, id int64, req model.UpdateQuizRequest) (*model.QuizResponse, error)
 	DeleteQuiz(ctx context.Context, id int64) (*model.DeleteQuizResponse, error)
+	TakeQuiz(ctx context.Context, id int64) (*model.TakeQuizResponse, error)
+	SubmitQuiz(ctx context.Context, id int64, req model.SubmitQuizRequest) (*model.SubmitQuizResponse, error)
 }
 
 type Question interface {

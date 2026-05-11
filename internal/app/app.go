@@ -42,12 +42,11 @@ func New(cfg *config.Config, log *zap.Logger) (*App, error) {
 	authUC := authusecase.New(authClient)
 
 	quizClient := quizgrpc.NewClient(quizConn)
-	quizUC := quizusecase.New(quizClient)
-
 	questionClient := questiongrpc.NewClient(quizConn)
-	questionUC := questionusecase.New(questionClient)
-
 	answerClient := answergrpc.NewClient(quizConn)
+
+	quizUC := quizusecase.New(quizClient, questionClient, answerClient)
+	questionUC := questionusecase.New(questionClient)
 	answerUC := answerusecase.New(answerClient)
 
 	router := httpserver.NewRouter(cfg.App.Env, cfg.JWT.SecretKey, log, authUC, quizUC, questionUC, answerUC)
