@@ -34,21 +34,26 @@ func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Aut
 	}
 
 	protected := v1.Group("", middleware.AuthMiddleware(jwtSecret))
+	staffOnly := middleware.RoleMiddleware("curator", "teacher", "admin")
 
 	quiz := quizhandler.NewHandler(quizUC, log)
 	quizGroup := protected.Group("/quizzes")
 	{
-		quizGroup.POST("", quiz.Create)
-		quizGroup.GET("", quiz.GetAll)
-		quizGroup.GET("/:id", quiz.GetByID)
-		quizGroup.PUT("/:id", quiz.Update)
-		quizGroup.DELETE("/:id", quiz.Delete)
 		quizGroup.GET("/:id/take", quiz.TakeQuiz)
 		quizGroup.POST("/:id/submit", quiz.SubmitQuiz)
+
+		quizCRUD := quizGroup.Group("", staffOnly)
+		{
+			quizCRUD.POST("", quiz.Create)
+			quizCRUD.GET("", quiz.GetAll)
+			quizCRUD.GET("/:id", quiz.GetByID)
+			quizCRUD.PUT("/:id", quiz.Update)
+			quizCRUD.DELETE("/:id", quiz.Delete)
+		}
 	}
 
 	question := questionhandler.NewHandler(questionUC, log)
-	questionGroup := protected.Group("/questions")
+	questionGroup := protected.Group("/questions", staffOnly)
 	{
 		questionGroup.POST("", question.Create)
 		questionGroup.GET("", question.GetAll)
@@ -58,7 +63,7 @@ func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Aut
 	}
 
 	answer := answerhandler.NewHandler(answerUC, log)
-	answerGroup := protected.Group("/answers")
+	answerGroup := protected.Group("/answers", staffOnly)
 	{
 		answerGroup.POST("", answer.Create)
 		answerGroup.GET("", answer.GetAll)
