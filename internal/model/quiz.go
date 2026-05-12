@@ -69,8 +69,23 @@ type QuestionResult struct {
 }
 
 type SubmitQuizResponse struct {
-	TotalQuestions int              `json:"total_questions"`
-	CorrectAnswers int              `json:"correct_answers"`
+	ResultID       int64            `json:"result_id"`
+	TotalQuestions int32            `json:"total_questions"`
+	CorrectAnswers int32            `json:"correct_answers"`
 	Score          float64          `json:"score"`
 	Results        []QuestionResult `json:"results"`
+}
+
+type QuizResultSummary struct {
+	ID             int64   `json:"id"`
+	QuizID         int64   `json:"quiz_id"`
+	UserID         int64   `json:"user_id"`
+	Score          float64 `json:"score"`
+	TotalQuestions int32   `json:"total_questions"`
+	CorrectAnswers int32   `json:"correct_answers"`
+	SubmittedAt    int64   `json:"submitted_at"`
+}
+
+type GetQuizResultsResponse struct {
+	Results []QuizResultSummary `json:"results"`
 }

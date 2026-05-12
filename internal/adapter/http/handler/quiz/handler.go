@@ -155,7 +155,36 @@ func (h *Handler) SubmitQuiz(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.quizUC.SubmitQuiz(c.Request.Context(), id, req)
+	ctx := metadata.AppendToOutgoingContext(c.Request.Context(), "authorization", c.GetHeader("Authorization"))
+
+	resp, err := h.quizUC.SubmitQuiz(ctx, id, req)
+	if err != nil {
+		h.handleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusCreated, resp)
+}
+
+func (h *Handler) GetResults(c *gin.Context) {
+	id, err := parseID(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	var userID int64
+	if v := c.Query("user_id"); v != "" {
+		userID, err = strconv.ParseInt(v, 10, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user_id"})
+			return
+		}
+	}
+
+	ctx := metadata.AppendToOutgoingContext(c.Request.Context(), "authorization", c.GetHeader("Authorization"))
+
+	resp, err := h.quizUC.GetQuizResults(ctx, id, userID)
 	if err != nil {
 		h.handleError(c, err)
 		return

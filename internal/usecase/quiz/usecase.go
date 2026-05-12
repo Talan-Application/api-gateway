@@ -22,17 +22,24 @@ type AnswerGRPCClient interface {
 	GetAllAnswers(ctx context.Context, questionID int64, limit, offset *int32) (*model.GetAllAnswersResponse, error)
 }
 
-type UseCase struct {
-	quizClient     QuizGRPCClient
-	questionClient QuestionGRPCClient
-	answerClient   AnswerGRPCClient
+type QuizResultGRPCClient interface {
+	SubmitQuiz(ctx context.Context, quizID int64, req model.SubmitQuizRequest) (*model.SubmitQuizResponse, error)
+	GetQuizResults(ctx context.Context, quizID, userID int64) (*model.GetQuizResultsResponse, error)
 }
 
-func New(quizClient QuizGRPCClient, questionClient QuestionGRPCClient, answerClient AnswerGRPCClient) *UseCase {
+type UseCase struct {
+	quizClient       QuizGRPCClient
+	questionClient   QuestionGRPCClient
+	answerClient     AnswerGRPCClient
+	resultClient     QuizResultGRPCClient
+}
+
+func New(quizClient QuizGRPCClient, questionClient QuestionGRPCClient, answerClient AnswerGRPCClient, resultClient QuizResultGRPCClient) *UseCase {
 	return &UseCase{
 		quizClient:     quizClient,
 		questionClient: questionClient,
 		answerClient:   answerClient,
+		resultClient:   resultClient,
 	}
 }
 
@@ -93,48 +100,9 @@ func (uc *UseCase) TakeQuiz(ctx context.Context, id int64) (*model.TakeQuizRespo
 }
 
 func (uc *UseCase) SubmitQuiz(ctx context.Context, id int64, req model.SubmitQuizRequest) (*model.SubmitQuizResponse, error) {
-	results := make([]model.QuestionResult, 0, len(req.Answers))
-	correctCount := 0
+	return uc.resultClient.SubmitQuiz(ctx, id, req)
+}
 
-	for _, submission := range req.Answers {
-		allAnswers, err := uc.answerClient.GetAllAnswers(ctx, submission.QuestionID, nil, nil)
-		if err != nil {
-			return nil, err
-		}
-
-		var correctAnswerID int64
-		var isCorrect bool
-		for _, a := range allAnswers.Answers {
-			if a.Correct {
-				correctAnswerID = a.ID
-			}
-			if a.ID == submission.AnswerID && a.Correct {
-				isCorrect = true
-			}
-		}
-
-		if isCorrect {
-			correctCount++
-		}
-
-		results = append(results, model.QuestionResult{
-			QuestionID:       submission.QuestionID,
-			SelectedAnswerID: submission.AnswerID,
-			CorrectAnswerID:  correctAnswerID,
-			IsCorrect:        isCorrect,
-		})
-	}
-
-	total := len(req.Answers)
-	var score float64
-	if total > 0 {
-		score = float64(correctCount) / float64(total) * 100
-	}
-
-	return &model.SubmitQuizResponse{
-		TotalQuestions: total,
-		CorrectAnswers: correctCount,
-		Score:          score,
-		Results:        results,
-	}, nil
+func (uc *UseCase) GetQuizResults(ctx context.Context, quizID, userID int64) (*model.GetQuizResultsResponse, error) {
+	return uc.resultClient.GetQuizResults(ctx, quizID, userID)
 }
