@@ -11,6 +11,7 @@ import (
 	authgrpc "github.com/Talan-Application/api-gateway/internal/adapter/grpc/auth"
 	questiongrpc "github.com/Talan-Application/api-gateway/internal/adapter/grpc/question"
 	quizgrpc "github.com/Talan-Application/api-gateway/internal/adapter/grpc/quiz"
+	quizresultgrpc "github.com/Talan-Application/api-gateway/internal/adapter/grpc/quizresult"
 	httpserver "github.com/Talan-Application/api-gateway/internal/adapter/http"
 	"github.com/Talan-Application/api-gateway/internal/config"
 	answerusecase "github.com/Talan-Application/api-gateway/internal/usecase/answer"
@@ -44,8 +45,9 @@ func New(cfg *config.Config, log *zap.Logger) (*App, error) {
 	quizClient := quizgrpc.NewClient(quizConn)
 	questionClient := questiongrpc.NewClient(quizConn)
 	answerClient := answergrpc.NewClient(quizConn)
+	resultClient := quizresultgrpc.NewClient(quizConn)
 
-	quizUC := quizusecase.New(quizClient, questionClient, answerClient)
+	quizUC := quizusecase.New(quizClient, questionClient, answerClient, resultClient)
 	questionUC := questionusecase.New(questionClient)
 	answerUC := answerusecase.New(answerClient)
 

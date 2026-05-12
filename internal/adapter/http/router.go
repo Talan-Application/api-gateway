@@ -41,6 +41,7 @@ func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Aut
 	{
 		quizGroup.GET("/:id/take", quiz.TakeQuiz)
 		quizGroup.POST("/:id/submit", quiz.SubmitQuiz)
+		quizGroup.GET("/:id/results", quiz.GetResults)
 
 		quizCRUD := quizGroup.Group("", staffOnly)
 		{

@@ -22,6 +22,7 @@ type Quiz interface {
 	DeleteQuiz(ctx context.Context, id int64) (*model.DeleteQuizResponse, error)
 	TakeQuiz(ctx context.Context, id int64) (*model.TakeQuizResponse, error)
 	SubmitQuiz(ctx context.Context, id int64, req model.SubmitQuizRequest) (*model.SubmitQuizResponse, error)
+	GetQuizResults(ctx context.Context, quizID, userID int64) (*model.GetQuizResultsResponse, error)
 }
 
 type Question interface {
