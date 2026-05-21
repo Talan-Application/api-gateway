@@ -55,12 +55,7 @@ func (h *Handler) GetByID(c *gin.Context) {
 }
 
 func (h *Handler) GetAll(c *gin.Context) {
-	quizIDStr := c.Query("quiz_id")
-	if quizIDStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "quiz_id is required"})
-		return
-	}
-	quizID, err := strconv.ParseInt(quizIDStr, 10, 64)
+	quizID, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid quiz_id"})
 		return

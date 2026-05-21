@@ -37,6 +37,9 @@ func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Aut
 	staffOnly := middleware.RoleMiddleware("curator", "teacher", "admin")
 
 	quiz := quizhandler.NewHandler(quizUC, log)
+	question := questionhandler.NewHandler(questionUC, log)
+	answer := answerhandler.NewHandler(answerUC, log)
+
 	quizGroup := protected.Group("/quizzes")
 	{
 		quizGroup.GET("/:id/take", quiz.TakeQuiz)
@@ -50,24 +53,22 @@ func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Aut
 			quizCRUD.GET("/:id", quiz.GetByID)
 			quizCRUD.PUT("/:id", quiz.Update)
 			quizCRUD.DELETE("/:id", quiz.Delete)
+			quizCRUD.GET("/:id/questions", question.GetAll)
 		}
 	}
 
-	question := questionhandler.NewHandler(questionUC, log)
 	questionGroup := protected.Group("/questions", staffOnly)
 	{
 		questionGroup.POST("", question.Create)
-		questionGroup.GET("", question.GetAll)
 		questionGroup.GET("/:id", question.GetByID)
 		questionGroup.PUT("/:id", question.Update)
 		questionGroup.DELETE("/:id", question.Delete)
+		questionGroup.GET("/:id/answers", answer.GetAll)
 	}
 
-	answer := answerhandler.NewHandler(answerUC, log)
 	answerGroup := protected.Group("/answers", staffOnly)
 	{
 		answerGroup.POST("", answer.Create)
-		answerGroup.GET("", answer.GetAll)
 		answerGroup.GET("/:id", answer.GetByID)
 		answerGroup.PUT("/:id", answer.Update)
 		answerGroup.DELETE("/:id", answer.Delete)
