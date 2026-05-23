@@ -40,3 +40,11 @@ type Answer interface {
 	UpdateAnswer(ctx context.Context, id int64, req model.UpdateAnswerRequest) (*model.AnswerResponse, error)
 	DeleteAnswer(ctx context.Context, id int64) (*model.DeleteAnswerResponse, error)
 }
+
+type CommonSubject interface {
+	CreateCommonSubject(ctx context.Context, req model.CreateCommonSubjectRequest) (*model.CommonSubjectResponse, error)
+	GetCommonSubject(ctx context.Context, id int64) (*model.CommonSubjectResponse, error)
+	GetAllCommonSubjects(ctx context.Context, limit, offset *int32) (*model.GetAllCommonSubjectsResponse, error)
+	UpdateCommonSubject(ctx context.Context, id int64, req model.UpdateCommonSubjectRequest) (*model.CommonSubjectResponse, error)
+	DeleteCommonSubject(ctx context.Context, id int64) (*model.DeleteCommonSubjectResponse, error)
+}

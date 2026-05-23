@@ -1,18 +1,22 @@
 package middleware
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+
+	"github.com/Talan-Application/api-gateway/internal/ctxkeys"
 )
 
 const (
 	ContextUserID = "user_id"
 	ContextEmail  = "email"
 	ContextRole   = "role"
+	ContextLocale = "locale"
 )
 
 type jwtClaims struct {
@@ -20,6 +24,7 @@ type jwtClaims struct {
 	UserID int64  `json:"user_id"`
 	Email  string `json:"email"`
 	Role   string `json:"role"`
+	Locale string `json:"locale"`
 }
 
 func AuthMiddleware(secretKey string) gin.HandlerFunc {
@@ -54,9 +59,19 @@ func AuthMiddleware(secretKey string) gin.HandlerFunc {
 			return
 		}
 
+		locale := claims.Locale
+		if locale == "" {
+			locale = "ru"
+		}
+
+		// Enrich request context so downstream gRPC clients can read locale.
+		enriched := context.WithValue(c.Request.Context(), ctxkeys.LocaleKey, locale)
+		c.Request = c.Request.WithContext(enriched)
+
 		c.Set(ContextUserID, claims.UserID)
 		c.Set(ContextEmail, claims.Email)
 		c.Set(ContextRole, claims.Role)
+		c.Set(ContextLocale, locale)
 
 		c.Next()
 	}

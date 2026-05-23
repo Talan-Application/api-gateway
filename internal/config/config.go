@@ -39,8 +39,9 @@ type HTTPServerConfig struct {
 }
 
 type ServicesConfig struct {
-	Auth ServiceConfig `mapstructure:"auth"`
-	Quiz ServiceConfig `mapstructure:"quiz"`
+	Auth           ServiceConfig `mapstructure:"auth"`
+	Quiz           ServiceConfig `mapstructure:"quiz"`
+	SystemHandbook ServiceConfig `mapstructure:"systemhandbook"`
 }
 
 type ServiceConfig struct {

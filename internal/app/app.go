@@ -12,12 +12,14 @@ import (
 	questiongrpc "github.com/Talan-Application/api-gateway/internal/adapter/grpc/question"
 	quizgrpc "github.com/Talan-Application/api-gateway/internal/adapter/grpc/quiz"
 	quizresultgrpc "github.com/Talan-Application/api-gateway/internal/adapter/grpc/quizresult"
+	commonsubjectgrpc "github.com/Talan-Application/api-gateway/internal/adapter/grpc/common_subject"
 	httpserver "github.com/Talan-Application/api-gateway/internal/adapter/http"
 	"github.com/Talan-Application/api-gateway/internal/config"
 	answerusecase "github.com/Talan-Application/api-gateway/internal/usecase/answer"
 	authusecase "github.com/Talan-Application/api-gateway/internal/usecase/auth"
 	questionusecase "github.com/Talan-Application/api-gateway/internal/usecase/question"
 	quizusecase "github.com/Talan-Application/api-gateway/internal/usecase/quiz"
+	commonsubjectusecase "github.com/Talan-Application/api-gateway/internal/usecase/common_subject"
 	"github.com/Talan-Application/api-gateway/pkg/grpcconn"
 )
 
@@ -39,6 +41,11 @@ func New(cfg *config.Config, log *zap.Logger) (*App, error) {
 		return nil, fmt.Errorf("quiz grpc connection: %w", err)
 	}
 
+	commonSubjectConn, err := grpcconn.New(cfg.Services.SystemHandbook.Address)
+	if err != nil {
+		return nil, fmt.Errorf("system handbook grpc connection: %w", err)
+	}
+
 	authClient := authgrpc.NewClient(authConn)
 	authUC := authusecase.New(authClient)
 
@@ -51,7 +58,10 @@ func New(cfg *config.Config, log *zap.Logger) (*App, error) {
 	questionUC := questionusecase.New(questionClient)
 	answerUC := answerusecase.New(answerClient)
 
-	router := httpserver.NewRouter(cfg.App.Env, cfg.JWT.SecretKey, log, authUC, quizUC, questionUC, answerUC)
+	commonSubjectClient := commonsubjectgrpc.NewClient(commonSubjectConn)
+	commonSubjectUC := commonsubjectusecase.New(commonSubjectClient)
+
+	router := httpserver.NewRouter(cfg.App.Env, cfg.JWT.SecretKey, log, authUC, quizUC, questionUC, answerUC, commonSubjectUC)
 	srv := httpserver.NewServer(cfg.Server.HTTPServer, router, log)
 
 	return &App{httpServer: srv, log: log}, nil

@@ -8,11 +8,12 @@ import (
 	authhandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/auth"
 	questionhandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/question"
 	quizhandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/quiz"
+	commonsubjecthandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/common_subject"
 	"github.com/Talan-Application/api-gateway/internal/adapter/http/middleware"
 	"github.com/Talan-Application/api-gateway/internal/usecase"
 )
 
-func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Auth, quizUC usecase.Quiz, questionUC usecase.Question, answerUC usecase.Answer) *gin.Engine {
+func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Auth, quizUC usecase.Quiz, questionUC usecase.Question, answerUC usecase.Answer, commonSubjectUC usecase.CommonSubject) *gin.Engine {
 	if env != "development" {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -72,6 +73,20 @@ func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Aut
 		answerGroup.GET("/:id", answer.GetByID)
 		answerGroup.PUT("/:id", answer.Update)
 		answerGroup.DELETE("/:id", answer.Delete)
+	}
+
+	commonSubject := commonsubjecthandler.NewHandler(commonSubjectUC, log)
+	commonSubjectGroup := protected.Group("/common-subjects")
+	{
+		commonSubjectGroup.GET("", commonSubject.GetAll)
+		commonSubjectGroup.GET("/:id", commonSubject.GetByID)
+
+		commonSubjectStaff := commonSubjectGroup.Group("", staffOnly)
+		{
+			commonSubjectStaff.POST("", commonSubject.Create)
+			commonSubjectStaff.PUT("/:id", commonSubject.Update)
+			commonSubjectStaff.DELETE("/:id", commonSubject.Delete)
+		}
 	}
 
 	return router
