@@ -10,7 +10,7 @@ type AuthGRPCClient interface {
 	Register(ctx context.Context, req model.RegisterRequest) (*model.MessageResponse, error)
 	Login(ctx context.Context, req model.LoginRequest) (*model.MessageResponse, error)
 	VerifyEmail(ctx context.Context, req model.VerifyCodeRequest) (*model.TokenResponse, error)
-	VerifyLoginCode(ctx context.Context, req model.VerifyCodeRequest) (*model.TokenResponse, error)
+	VerifyLoginCode(ctx context.Context, req model.VerifyCodeRequest) (*model.VerifyLoginResponse, error)
 	RefreshToken(ctx context.Context, req model.RefreshTokenRequest) (*model.TokenResponse, error)
 }
 
@@ -34,7 +34,7 @@ func (uc *UseCase) VerifyEmail(ctx context.Context, req model.VerifyCodeRequest)
 	return uc.authClient.VerifyEmail(ctx, req)
 }
 
-func (uc *UseCase) VerifyLoginCode(ctx context.Context, req model.VerifyCodeRequest) (*model.TokenResponse, error) {
+func (uc *UseCase) VerifyLoginCode(ctx context.Context, req model.VerifyCodeRequest) (*model.VerifyLoginResponse, error) {
 	return uc.authClient.VerifyLoginCode(ctx, req)
 }
 

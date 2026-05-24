@@ -56,7 +56,7 @@ func (c *Client) VerifyEmail(ctx context.Context, req model.VerifyCodeRequest) (
 	}, nil
 }
 
-func (c *Client) VerifyLoginCode(ctx context.Context, req model.VerifyCodeRequest) (*model.TokenResponse, error) {
+func (c *Client) VerifyLoginCode(ctx context.Context, req model.VerifyCodeRequest) (*model.VerifyLoginResponse, error) {
 	resp, err := c.stub.VerifyLoginCode(ctx, &authv1.VerifyCodeRequest{
 		Email: req.Email,
 		Code:  req.Code,
@@ -64,9 +64,15 @@ func (c *Client) VerifyLoginCode(ctx context.Context, req model.VerifyCodeReques
 	if err != nil {
 		return nil, err
 	}
-	return &model.TokenResponse{
+	return &model.VerifyLoginResponse{
 		AccessToken:  resp.GetAccessToken(),
 		RefreshToken: resp.GetRefreshToken(),
+		User: model.UserInfo{
+			FirstName:  resp.GetUser().GetFirstName(),
+			LastName:   resp.GetUser().GetLastName(),
+			MiddleName: resp.GetUser().MiddleName,
+			Role:       resp.GetUser().GetRole(),
+		},
 	}, nil
 }
 
