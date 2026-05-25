@@ -15,8 +15,15 @@ type CommonSubjectResponse struct {
 	UpdatedAt int64  `json:"updated_at"`
 }
 
+type CommonSubjectListItem struct {
+	ID           int64             `json:"id"`
+	CreatedAt    int64             `json:"created_at"`
+	UpdatedAt    int64             `json:"updated_at"`
+	Translations map[string]string `json:"translations"`
+}
+
 type GetAllCommonSubjectsResponse struct {
-	CommonSubjects []CommonSubjectResponse `json:"common_subjects"`
+	CommonSubjects []CommonSubjectListItem `json:"common_subjects"`
 }
 
 type DeleteCommonSubjectResponse struct {
