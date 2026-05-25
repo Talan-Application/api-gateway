@@ -21,6 +21,7 @@ func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Aut
 	router := gin.New()
 	router.Use(gin.Recovery())
 	router.Use(middleware.CorsMiddleware())
+	router.Use(middleware.LocaleMiddleware())
 
 	v1 := router.Group("/api/v1")
 
