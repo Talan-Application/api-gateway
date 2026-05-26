@@ -38,8 +38,33 @@ func (c *Client) GetQuiz(ctx context.Context, id int64) (*model.QuizResponse, er
 	return toModel(resp), nil
 }
 
-func (c *Client) GetAllQuizzes(ctx context.Context, limit, offset *int32) (*model.GetAllQuizzesResponse, error) {
+func (c *Client) GetAllQuizzes(ctx context.Context, status *string, limit, offset *int32) (*model.GetAllQuizzesResponse, error) {
 	resp, err := c.stub.GetAllQuizzes(ctx, &quizv1.GetAllQuizzesRequest{
+		Status: status,
+		Limit:  limit,
+		Offset: offset,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	quizzes := make([]model.QuizResponse, len(resp.GetQuizzes()))
+	for i, q := range resp.GetQuizzes() {
+		quizzes[i] = *toModel(q)
+	}
+	return &model.GetAllQuizzesResponse{Quizzes: quizzes}, nil
+}
+
+func (c *Client) PublishQuiz(ctx context.Context, id int64) (*model.QuizResponse, error) {
+	resp, err := c.stub.PublishQuiz(ctx, &quizv1.PublishQuizRequest{Id: id})
+	if err != nil {
+		return nil, err
+	}
+	return toModel(resp), nil
+}
+
+func (c *Client) GetMyQuizzes(ctx context.Context, limit, offset *int32) (*model.GetAllQuizzesResponse, error) {
+	resp, err := c.stub.GetMyQuizzes(ctx, &quizv1.GetMyQuizzesRequest{
 		Limit:  limit,
 		Offset: offset,
 	})

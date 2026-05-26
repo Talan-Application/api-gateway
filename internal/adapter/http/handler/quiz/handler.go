@@ -59,6 +59,7 @@ func (h *Handler) GetByID(c *gin.Context) {
 
 func (h *Handler) GetAll(c *gin.Context) {
 	var limit, offset *int32
+	var status *string
 
 	if v := c.Query("limit"); v != "" {
 		n, err := strconv.ParseInt(v, 10, 32)
@@ -79,7 +80,64 @@ func (h *Handler) GetAll(c *gin.Context) {
 		offset = &val
 	}
 
-	resp, err := h.quizUC.GetAllQuizzes(c.Request.Context(), limit, offset)
+	// Students only see published quizzes; staff see all.
+	if role, _ := c.Get("role"); role == "student" {
+		s := "published"
+		status = &s
+	}
+
+	resp, err := h.quizUC.GetAllQuizzes(c.Request.Context(), status, limit, offset)
+	if err != nil {
+		h.handleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+func (h *Handler) Publish(c *gin.Context) {
+	id, err := parseID(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	ctx := metadata.AppendToOutgoingContext(c.Request.Context(), "authorization", c.GetHeader("Authorization"))
+
+	resp, err := h.quizUC.PublishQuiz(ctx, id)
+	if err != nil {
+		h.handleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+func (h *Handler) GetMyQuizzes(c *gin.Context) {
+	var limit, offset *int32
+
+	if v := c.Query("limit"); v != "" {
+		n, err := strconv.ParseInt(v, 10, 32)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid limit"})
+			return
+		}
+		val := int32(n)
+		limit = &val
+	}
+	if v := c.Query("offset"); v != "" {
+		n, err := strconv.ParseInt(v, 10, 32)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid offset"})
+			return
+		}
+		val := int32(n)
+		offset = &val
+	}
+
+	ctx := metadata.AppendToOutgoingContext(c.Request.Context(), "authorization", c.GetHeader("Authorization"))
+
+	resp, err := h.quizUC.GetMyQuizzes(ctx, limit, offset)
 	if err != nil {
 		h.handleError(c, err)
 		return

@@ -13,8 +13,8 @@ all: build
 build:
 	New-Item -ItemType Directory -Force -Path $(BUILD_DIR) | Out-Null; go build -ldflags="-s -w" -o $(BINARY) $(MAIN)
 
-run:
-	go run $(MAIN)
+run: build
+	& $(BINARY)
 
 test:
 	go test ./...

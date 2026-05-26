@@ -17,7 +17,9 @@ type Auth interface {
 type Quiz interface {
 	CreateQuiz(ctx context.Context, req model.CreateQuizRequest) (*model.QuizResponse, error)
 	GetQuiz(ctx context.Context, id int64) (*model.QuizResponse, error)
-	GetAllQuizzes(ctx context.Context, limit, offset *int32) (*model.GetAllQuizzesResponse, error)
+	GetAllQuizzes(ctx context.Context, status *string, limit, offset *int32) (*model.GetAllQuizzesResponse, error)
+	PublishQuiz(ctx context.Context, id int64) (*model.QuizResponse, error)
+	GetMyQuizzes(ctx context.Context, limit, offset *int32) (*model.GetAllQuizzesResponse, error)
 	UpdateQuiz(ctx context.Context, id int64, req model.UpdateQuizRequest) (*model.QuizResponse, error)
 	DeleteQuiz(ctx context.Context, id int64) (*model.DeleteQuizResponse, error)
 	TakeQuiz(ctx context.Context, id int64) (*model.TakeQuizResponse, error)

@@ -6,9 +6,9 @@ import (
 
 	answerhandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/answer"
 	authhandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/auth"
+	commonsubjecthandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/common_subject"
 	questionhandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/question"
 	quizhandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/quiz"
-	commonsubjecthandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/common_subject"
 	"github.com/Talan-Application/api-gateway/internal/adapter/http/middleware"
 	"github.com/Talan-Application/api-gateway/internal/usecase"
 )
@@ -44,18 +44,20 @@ func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Aut
 
 	quizGroup := protected.Group("/quizzes")
 	{
+		quizGroup.GET("", quiz.GetAll)
 		quizGroup.GET("/:id/take", quiz.TakeQuiz)
 		quizGroup.POST("/:id/submit", quiz.SubmitQuiz)
 		quizGroup.GET("/:id/results", quiz.GetResults)
 
-		quizCRUD := quizGroup.Group("", staffOnly)
+		quizStaff := quizGroup.Group("", staffOnly)
 		{
-			quizCRUD.POST("", quiz.Create)
-			quizCRUD.GET("", quiz.GetAll)
-			quizCRUD.GET("/:id", quiz.GetByID)
-			quizCRUD.PUT("/:id", quiz.Update)
-			quizCRUD.DELETE("/:id", quiz.Delete)
-			quizCRUD.GET("/:id/questions", question.GetAll)
+			quizStaff.POST("", quiz.Create)
+			quizStaff.GET("/me", quiz.GetMyQuizzes)
+			quizStaff.GET("/:id", quiz.GetByID)
+			quizStaff.PUT("/:id", quiz.Update)
+			quizStaff.DELETE("/:id", quiz.Delete)
+			quizStaff.PATCH("/:id/publish", quiz.Publish)
+			quizStaff.GET("/:id/questions", question.GetAll)
 		}
 	}
 
