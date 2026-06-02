@@ -10,6 +10,7 @@ type CommonSubjectGRPCClient interface {
 	CreateCommonSubject(ctx context.Context, req model.CreateCommonSubjectRequest) (*model.CommonSubjectResponse, error)
 	GetCommonSubject(ctx context.Context, id int64) (*model.CommonSubjectResponse, error)
 	GetAllCommonSubjects(ctx context.Context, limit, offset *int32) (*model.GetAllCommonSubjectsResponse, error)
+	GetCommonSubjectsLookup(ctx context.Context) (*model.GetCommonSubjectsLookupResponse, error)
 	UpdateCommonSubject(ctx context.Context, id int64, req model.UpdateCommonSubjectRequest) (*model.CommonSubjectResponse, error)
 	DeleteCommonSubject(ctx context.Context, id int64) (*model.DeleteCommonSubjectResponse, error)
 }
@@ -32,6 +33,10 @@ func (uc *UseCase) GetCommonSubject(ctx context.Context, id int64) (*model.Commo
 
 func (uc *UseCase) GetAllCommonSubjects(ctx context.Context, limit, offset *int32) (*model.GetAllCommonSubjectsResponse, error) {
 	return uc.client.GetAllCommonSubjects(ctx, limit, offset)
+}
+
+func (uc *UseCase) GetCommonSubjectsLookup(ctx context.Context) (*model.GetCommonSubjectsLookupResponse, error) {
+	return uc.client.GetCommonSubjectsLookup(ctx)
 }
 
 func (uc *UseCase) UpdateCommonSubject(ctx context.Context, id int64, req model.UpdateCommonSubjectRequest) (*model.CommonSubjectResponse, error) {

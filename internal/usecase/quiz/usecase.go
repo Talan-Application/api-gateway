@@ -10,7 +10,7 @@ type QuizGRPCClient interface {
 	CreateQuiz(ctx context.Context, req model.CreateQuizRequest) (*model.QuizResponse, error)
 	GetQuiz(ctx context.Context, id int64) (*model.QuizResponse, error)
 	GetAllQuizzes(ctx context.Context, status *string, limit, offset *int32) (*model.GetAllQuizzesResponse, error)
-	PublishQuiz(ctx context.Context, id int64) (*model.QuizResponse, error)
+	PublishQuiz(ctx context.Context, id int64) error
 	GetMyQuizzes(ctx context.Context, limit, offset *int32) (*model.GetAllQuizzesResponse, error)
 	UpdateQuiz(ctx context.Context, id int64, req model.UpdateQuizRequest) (*model.QuizResponse, error)
 	DeleteQuiz(ctx context.Context, id int64) (*model.DeleteQuizResponse, error)
@@ -57,7 +57,7 @@ func (uc *UseCase) GetAllQuizzes(ctx context.Context, status *string, limit, off
 	return uc.quizClient.GetAllQuizzes(ctx, status, limit, offset)
 }
 
-func (uc *UseCase) PublishQuiz(ctx context.Context, id int64) (*model.QuizResponse, error) {
+func (uc *UseCase) PublishQuiz(ctx context.Context, id int64) error {
 	return uc.quizClient.PublishQuiz(ctx, id)
 }
 

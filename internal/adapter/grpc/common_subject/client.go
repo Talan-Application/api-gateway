@@ -60,6 +60,23 @@ func (c *Client) GetAllCommonSubjects(ctx context.Context, limit, offset *int32)
 	return &model.GetAllCommonSubjectsResponse{CommonSubjects: subjects}, nil
 }
 
+func (c *Client) GetCommonSubjectsLookup(ctx context.Context) (*model.GetCommonSubjectsLookupResponse, error) {
+	ctx = withLocale(ctx)
+	resp, err := c.stub.GetCommonSubjectsLookup(ctx, &commonsubjectv1.GetCommonSubjectsLookupRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	items := make([]model.CommonSubjectLookupItem, len(resp.GetCommonSubjects()))
+	for i, s := range resp.GetCommonSubjects() {
+		items[i] = model.CommonSubjectLookupItem{
+			ID:   s.GetId(),
+			Name: s.GetName(),
+		}
+	}
+	return &model.GetCommonSubjectsLookupResponse{CommonSubjects: items}, nil
+}
+
 func (c *Client) UpdateCommonSubject(ctx context.Context, id int64, req model.UpdateCommonSubjectRequest) (*model.CommonSubjectResponse, error) {
 	resp, err := c.stub.UpdateCommonSubject(ctx, &commonsubjectv1.UpdateCommonSubjectRequest{
 		Id:           id,

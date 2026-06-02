@@ -54,6 +54,16 @@ func (h *Handler) GetByID(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+func (h *Handler) Lookup(c *gin.Context) {
+	resp, err := h.commonSubjectUC.GetCommonSubjectsLookup(c.Request.Context())
+	if err != nil {
+		h.handleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
 func (h *Handler) GetAll(c *gin.Context) {
 	var limit, offset *int32
 
