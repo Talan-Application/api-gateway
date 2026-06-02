@@ -55,12 +55,9 @@ func (c *Client) GetAllQuizzes(ctx context.Context, status *string, limit, offse
 	return &model.GetAllQuizzesResponse{Quizzes: quizzes}, nil
 }
 
-func (c *Client) PublishQuiz(ctx context.Context, id int64) (*model.QuizResponse, error) {
-	resp, err := c.stub.PublishQuiz(ctx, &quizv1.PublishQuizRequest{Id: id})
-	if err != nil {
-		return nil, err
-	}
-	return toModel(resp), nil
+func (c *Client) PublishQuiz(ctx context.Context, id int64) error {
+	_, err := c.stub.PublishQuiz(ctx, &quizv1.PublishQuizRequest{Id: id})
+	return err
 }
 
 func (c *Client) GetMyQuizzes(ctx context.Context, limit, offset *int32) (*model.GetAllQuizzesResponse, error) {

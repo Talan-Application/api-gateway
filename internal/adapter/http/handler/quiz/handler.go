@@ -104,13 +104,12 @@ func (h *Handler) Publish(c *gin.Context) {
 
 	ctx := metadata.AppendToOutgoingContext(c.Request.Context(), "authorization", c.GetHeader("Authorization"))
 
-	resp, err := h.quizUC.PublishQuiz(ctx, id)
-	if err != nil {
+	if err := h.quizUC.PublishQuiz(ctx, id); err != nil {
 		h.handleError(c, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, resp)
+	c.Status(http.StatusOK)
 }
 
 func (h *Handler) GetMyQuizzes(c *gin.Context) {

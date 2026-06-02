@@ -26,6 +26,15 @@ type GetAllCommonSubjectsResponse struct {
 	CommonSubjects []CommonSubjectListItem `json:"common_subjects"`
 }
 
+type CommonSubjectLookupItem struct {
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
+}
+
+type GetCommonSubjectsLookupResponse struct {
+	CommonSubjects []CommonSubjectLookupItem `json:"common_subjects"`
+}
+
 type DeleteCommonSubjectResponse struct {
 	Message string `json:"message"`
 }

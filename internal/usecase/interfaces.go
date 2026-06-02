@@ -18,7 +18,7 @@ type Quiz interface {
 	CreateQuiz(ctx context.Context, req model.CreateQuizRequest) (*model.QuizResponse, error)
 	GetQuiz(ctx context.Context, id int64) (*model.QuizResponse, error)
 	GetAllQuizzes(ctx context.Context, status *string, limit, offset *int32) (*model.GetAllQuizzesResponse, error)
-	PublishQuiz(ctx context.Context, id int64) (*model.QuizResponse, error)
+	PublishQuiz(ctx context.Context, id int64) error
 	GetMyQuizzes(ctx context.Context, limit, offset *int32) (*model.GetAllQuizzesResponse, error)
 	UpdateQuiz(ctx context.Context, id int64, req model.UpdateQuizRequest) (*model.QuizResponse, error)
 	DeleteQuiz(ctx context.Context, id int64) (*model.DeleteQuizResponse, error)
@@ -47,6 +47,7 @@ type CommonSubject interface {
 	CreateCommonSubject(ctx context.Context, req model.CreateCommonSubjectRequest) (*model.CommonSubjectResponse, error)
 	GetCommonSubject(ctx context.Context, id int64) (*model.CommonSubjectResponse, error)
 	GetAllCommonSubjects(ctx context.Context, limit, offset *int32) (*model.GetAllCommonSubjectsResponse, error)
+	GetCommonSubjectsLookup(ctx context.Context) (*model.GetCommonSubjectsLookupResponse, error)
 	UpdateCommonSubject(ctx context.Context, id int64, req model.UpdateCommonSubjectRequest) (*model.CommonSubjectResponse, error)
 	DeleteCommonSubject(ctx context.Context, id int64) (*model.DeleteCommonSubjectResponse, error)
 }

@@ -82,6 +82,7 @@ func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Aut
 	commonSubjectGroup := protected.Group("/common-subjects")
 	{
 		commonSubjectGroup.GET("", commonSubject.GetAll)
+		commonSubjectGroup.GET("/lookup", commonSubject.Lookup)
 		commonSubjectGroup.GET("/:id", commonSubject.GetByID)
 
 		commonSubjectStaff := commonSubjectGroup.Group("", staffOnly)
