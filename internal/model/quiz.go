@@ -1,10 +1,10 @@
 package model
 
 type CreateQuizRequest struct {
-	Title     string `json:"title"      binding:"required"`
-	Language  string `json:"language"   binding:"required"`
-	Type      string `json:"type"       binding:"required,oneof=ent monthly_exam exam"`
-	SubjectID int64  `json:"subject_id" binding:"required"`
+	Title           string `json:"title"      binding:"required"`
+	Language        string `json:"language"   binding:"required"`
+	Type            string `json:"type"       binding:"required,oneof=ent monthly_exam exam"`
+	CommonSubjectID int64  `json:"common_subject_id" binding:"required"`
 }
 
 type UpdateQuizRequest struct {

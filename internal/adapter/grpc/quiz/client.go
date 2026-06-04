@@ -5,8 +5,8 @@ import (
 
 	"google.golang.org/grpc"
 
-	quizv1 "github.com/Talan-Application/proto-generation/quiz/v1"
 	"github.com/Talan-Application/api-gateway/internal/model"
+	quizv1 "github.com/Talan-Application/proto-generation/quiz/v1"
 )
 
 type Client struct {
@@ -19,10 +19,10 @@ func NewClient(conn *grpc.ClientConn) *Client {
 
 func (c *Client) CreateQuiz(ctx context.Context, req model.CreateQuizRequest) (*model.QuizResponse, error) {
 	resp, err := c.stub.CreateQuiz(ctx, &quizv1.CreateQuizRequest{
-		Title:     req.Title,
-		Language:  req.Language,
-		Type:      req.Type,
-		SubjectId: req.SubjectID,
+		Title:           req.Title,
+		Language:        req.Language,
+		Type:            req.Type,
+		CommonSubjectId: req.CommonSubjectID,
 	})
 	if err != nil {
 		return nil, err
@@ -105,7 +105,7 @@ func toModel(q *quizv1.QuizResponse) *model.QuizResponse {
 		AuthorID:  q.GetAuthorId(),
 		Status:    q.GetStatus(),
 		Type:      q.GetType(),
-		SubjectID: q.GetSubjectId(),
+		SubjectID: q.GetCommonSubjectId(),
 		CreatedAt: q.GetCreatedAt(),
 		UpdatedAt: q.GetUpdatedAt(),
 	}

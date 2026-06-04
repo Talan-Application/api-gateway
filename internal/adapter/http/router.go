@@ -48,16 +48,16 @@ func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Aut
 		quizGroup.GET("/:id/take", quiz.TakeQuiz)
 		quizGroup.POST("/:id/submit", quiz.SubmitQuiz)
 		quizGroup.GET("/:id/results", quiz.GetResults)
+		quizGroup.GET("/:id", quiz.GetByID)
+		quizGroup.GET("/:id/questions", question.GetAll)
 
 		quizStaff := quizGroup.Group("", staffOnly)
 		{
 			quizStaff.POST("", quiz.Create)
 			quizStaff.GET("/me", quiz.GetMyQuizzes)
-			quizStaff.GET("/:id", quiz.GetByID)
 			quizStaff.PUT("/:id", quiz.Update)
 			quizStaff.DELETE("/:id", quiz.Delete)
 			quizStaff.PATCH("/:id/publish", quiz.Publish)
-			quizStaff.GET("/:id/questions", question.GetAll)
 		}
 	}
 
