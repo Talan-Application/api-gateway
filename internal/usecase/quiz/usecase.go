@@ -53,7 +53,12 @@ func (uc *UseCase) GetQuiz(ctx context.Context, id int64) (*model.QuizResponse, 
 	return uc.quizClient.GetQuiz(ctx, id)
 }
 
-func (uc *UseCase) GetAllQuizzes(ctx context.Context, status *string, limit, offset *int32) (*model.GetAllQuizzesResponse, error) {
+func (uc *UseCase) GetAllQuizzes(ctx context.Context, role string, limit, offset *int32) (*model.GetAllQuizzesResponse, error) {
+	var status *string
+	if role == "student" {
+		s := "published"
+		status = &s
+	}
 	return uc.quizClient.GetAllQuizzes(ctx, status, limit, offset)
 }
 

@@ -23,7 +23,7 @@ func (c *Client) SubmitQuiz(ctx context.Context, quizID int64, req model.SubmitQ
 	for i, a := range req.Answers {
 		answers[i] = &quizv1.AnswerSubmission{
 			QuestionId: a.QuestionID,
-			AnswerId:   a.AnswerID,
+			AnswerIds:  a.AnswerIDs,
 		}
 	}
 
@@ -38,19 +38,23 @@ func (c *Client) SubmitQuiz(ctx context.Context, quizID int64, req model.SubmitQ
 	results := make([]model.QuestionResult, len(resp.GetResults()))
 	for i, r := range resp.GetResults() {
 		results[i] = model.QuestionResult{
-			QuestionID:       r.GetQuestionId(),
-			SelectedAnswerID: r.GetSelectedAnswerId(),
-			CorrectAnswerID:  r.GetCorrectAnswerId(),
-			IsCorrect:        r.GetIsCorrect(),
+			QuestionID:        r.GetQuestionId(),
+			SelectedAnswerIDs: r.GetSelectedAnswerIds(),
+			CorrectAnswerIDs:  r.GetCorrectAnswerIds(),
+			Score:             r.GetScore(),
+			MaxScore:          r.GetMaxScore(),
 		}
 	}
 
 	return &model.SubmitQuizResponse{
-		ResultID:       resp.GetResultId(),
-		TotalQuestions: resp.GetTotalQuestions(),
-		CorrectAnswers: resp.GetCorrectAnswers(),
-		Score:          resp.GetScore(),
-		Results:        results,
+		ResultID:             resp.GetResultId(),
+		TotalQuestionsCount:  resp.GetTotalQuestionsCount(),
+		CorrectAnswersCount:  resp.GetCorrectAnswersCount(),
+		IncorrectAnswersCount: resp.GetIncorrectAnswersCount(),
+		UnansweredQuestions:  resp.GetUnansweredQuestions(),
+		Score:                resp.GetScore(),
+		MaxScore:             resp.GetMaxScore(),
+		Results:              results,
 	}, nil
 }
 
@@ -66,13 +70,16 @@ func (c *Client) GetQuizResults(ctx context.Context, quizID, userID int64) (*mod
 	summaries := make([]model.QuizResultSummary, len(resp.GetResults()))
 	for i, r := range resp.GetResults() {
 		summaries[i] = model.QuizResultSummary{
-			ID:             r.GetId(),
-			QuizID:         r.GetQuizId(),
-			UserID:         r.GetUserId(),
-			Score:          r.GetScore(),
-			TotalQuestions: r.GetTotalQuestions(),
-			CorrectAnswers: r.GetCorrectAnswers(),
-			SubmittedAt:    r.GetSubmittedAt(),
+			ID:                   r.GetId(),
+			QuizID:               r.GetQuizId(),
+			UserID:               r.GetUserId(),
+			Score:                r.GetScore(),
+			MaxScore:             r.GetMaxScore(),
+			TotalQuestionsCount:  r.GetTotalQuestionsCount(),
+			CorrectAnswersCount:  r.GetCorrectAnswersCount(),
+			IncorrectAnswersCount: r.GetIncorrectAnswersCount(),
+			UnansweredQuestions:  r.GetUnansweredQuestions(),
+			SubmittedAt:          r.GetSubmittedAt(),
 		}
 	}
 

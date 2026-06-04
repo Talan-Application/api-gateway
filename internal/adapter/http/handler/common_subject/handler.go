@@ -152,6 +152,10 @@ func (h *Handler) handleError(c *gin.Context, err error) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": st.Message()})
 	case codes.AlreadyExists:
 		c.JSON(http.StatusConflict, gin.H{"error": st.Message()})
+	case codes.Unauthenticated:
+		c.JSON(http.StatusUnauthorized, gin.H{"error": st.Message()})
+	case codes.PermissionDenied:
+		c.JSON(http.StatusForbidden, gin.H{"error": st.Message()})
 	case codes.Unavailable:
 		h.log.Error("common subject service unavailable", zap.Error(err))
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "common subject service unavailable"})

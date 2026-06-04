@@ -1,12 +1,15 @@
 package middleware
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+
+	"github.com/Talan-Application/api-gateway/internal/ctxkeys"
 )
 
 const (
@@ -57,6 +60,9 @@ func AuthMiddleware(secretKey string) gin.HandlerFunc {
 		c.Set(ContextUserID, claims.UserID)
 		c.Set(ContextEmail, claims.Email)
 		c.Set(ContextRole, claims.Role)
+
+		ctx := context.WithValue(c.Request.Context(), ctxkeys.AuthHeaderKey, header)
+		c.Request = c.Request.WithContext(ctx)
 
 		c.Next()
 	}

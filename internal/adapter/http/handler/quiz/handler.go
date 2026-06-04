@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
 	"github.com/Talan-Application/api-gateway/internal/model"
@@ -30,9 +29,7 @@ func (h *Handler) Create(c *gin.Context) {
 		return
 	}
 
-	ctx := metadata.AppendToOutgoingContext(c.Request.Context(), "authorization", c.GetHeader("Authorization"))
-
-	resp, err := h.quizUC.CreateQuiz(ctx, req)
+	resp, err := h.quizUC.CreateQuiz(c.Request.Context(), req)
 	if err != nil {
 		h.handleError(c, err)
 		return
@@ -59,7 +56,6 @@ func (h *Handler) GetByID(c *gin.Context) {
 
 func (h *Handler) GetAll(c *gin.Context) {
 	var limit, offset *int32
-	var status *string
 
 	if v := c.Query("limit"); v != "" {
 		n, err := strconv.ParseInt(v, 10, 32)
@@ -80,13 +76,10 @@ func (h *Handler) GetAll(c *gin.Context) {
 		offset = &val
 	}
 
-	// Students only see published quizzes; staff see all.
-	if role, _ := c.Get("role"); role == "student" {
-		s := "published"
-		status = &s
-	}
+	role, _ := c.Get("role")
+	roleStr, _ := role.(string)
 
-	resp, err := h.quizUC.GetAllQuizzes(c.Request.Context(), status, limit, offset)
+	resp, err := h.quizUC.GetAllQuizzes(c.Request.Context(), roleStr, limit, offset)
 	if err != nil {
 		h.handleError(c, err)
 		return
@@ -102,9 +95,7 @@ func (h *Handler) Publish(c *gin.Context) {
 		return
 	}
 
-	ctx := metadata.AppendToOutgoingContext(c.Request.Context(), "authorization", c.GetHeader("Authorization"))
-
-	if err := h.quizUC.PublishQuiz(ctx, id); err != nil {
+	if err := h.quizUC.PublishQuiz(c.Request.Context(), id); err != nil {
 		h.handleError(c, err)
 		return
 	}
@@ -134,9 +125,7 @@ func (h *Handler) GetMyQuizzes(c *gin.Context) {
 		offset = &val
 	}
 
-	ctx := metadata.AppendToOutgoingContext(c.Request.Context(), "authorization", c.GetHeader("Authorization"))
-
-	resp, err := h.quizUC.GetMyQuizzes(ctx, limit, offset)
+	resp, err := h.quizUC.GetMyQuizzes(c.Request.Context(), limit, offset)
 	if err != nil {
 		h.handleError(c, err)
 		return
@@ -212,9 +201,7 @@ func (h *Handler) SubmitQuiz(c *gin.Context) {
 		return
 	}
 
-	ctx := metadata.AppendToOutgoingContext(c.Request.Context(), "authorization", c.GetHeader("Authorization"))
-
-	resp, err := h.quizUC.SubmitQuiz(ctx, id, req)
+	resp, err := h.quizUC.SubmitQuiz(c.Request.Context(), id, req)
 	if err != nil {
 		h.handleError(c, err)
 		return
@@ -239,9 +226,7 @@ func (h *Handler) GetResults(c *gin.Context) {
 		}
 	}
 
-	ctx := metadata.AppendToOutgoingContext(c.Request.Context(), "authorization", c.GetHeader("Authorization"))
-
-	resp, err := h.quizUC.GetQuizResults(ctx, id, userID)
+	resp, err := h.quizUC.GetQuizResults(c.Request.Context(), id, userID)
 	if err != nil {
 		h.handleError(c, err)
 		return

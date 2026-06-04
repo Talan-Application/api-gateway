@@ -22,7 +22,7 @@ type QuizResponse struct {
 	AuthorID      int64  `json:"author_id"`
 	Status        string `json:"status"`
 	Type          string `json:"type"`
-	SubjectID     int64  `json:"subject_id"`
+	CommonSubjectID int64  `json:"common_subject_id"`
 	IsEntStandard bool   `json:"is_ent_standard"`
 	CreatedAt     int64  `json:"created_at"`
 	UpdatedAt     int64  `json:"updated_at"`
@@ -56,8 +56,8 @@ type TakeQuizResponse struct {
 }
 
 type QuizAnswerSubmission struct {
-	QuestionID int64 `json:"question_id" binding:"required"`
-	AnswerID   int64 `json:"answer_id"   binding:"required"`
+	QuestionID int64   `json:"question_id" binding:"required"`
+	AnswerIDs  []int64 `json:"answer_ids"  binding:"required,min=1"`
 }
 
 type SubmitQuizRequest struct {
@@ -65,28 +65,35 @@ type SubmitQuizRequest struct {
 }
 
 type QuestionResult struct {
-	QuestionID       int64 `json:"question_id"`
-	SelectedAnswerID int64 `json:"selected_answer_id"`
-	CorrectAnswerID  int64 `json:"correct_answer_id"`
-	IsCorrect        bool  `json:"is_correct"`
+	QuestionID        int64   `json:"question_id"`
+	SelectedAnswerIDs []int64 `json:"selected_answer_ids"`
+	CorrectAnswerIDs  []int64 `json:"correct_answer_ids"`
+	Score             float64 `json:"score"`
+	MaxScore          float64 `json:"max_score"`
 }
 
 type SubmitQuizResponse struct {
-	ResultID       int64            `json:"result_id"`
-	TotalQuestions int32            `json:"total_questions"`
-	CorrectAnswers int32            `json:"correct_answers"`
-	Score          float64          `json:"score"`
-	Results        []QuestionResult `json:"results"`
+	ResultID             int64            `json:"result_id"`
+	TotalQuestionsCount  int32            `json:"total_questions_count"`
+	CorrectAnswersCount  int32            `json:"correct_answers_count"`
+	IncorrectAnswersCount int32           `json:"incorrect_answers_count"`
+	UnansweredQuestions  int32            `json:"unanswered_questions"`
+	Score                float64          `json:"score"`
+	MaxScore             float64          `json:"max_score"`
+	Results              []QuestionResult `json:"results"`
 }
 
 type QuizResultSummary struct {
-	ID             int64   `json:"id"`
-	QuizID         int64   `json:"quiz_id"`
-	UserID         int64   `json:"user_id"`
-	Score          float64 `json:"score"`
-	TotalQuestions int32   `json:"total_questions"`
-	CorrectAnswers int32   `json:"correct_answers"`
-	SubmittedAt    int64   `json:"submitted_at"`
+	ID                   int64   `json:"id"`
+	QuizID               int64   `json:"quiz_id"`
+	UserID               int64   `json:"user_id"`
+	Score                float64 `json:"score"`
+	MaxScore             float64 `json:"max_score"`
+	TotalQuestionsCount  int32   `json:"total_questions_count"`
+	CorrectAnswersCount  int32   `json:"correct_answers_count"`
+	IncorrectAnswersCount int32  `json:"incorrect_answers_count"`
+	UnansweredQuestions  int32   `json:"unanswered_questions"`
+	SubmittedAt          int64   `json:"submitted_at"`
 }
 
 type GetQuizResultsResponse struct {
