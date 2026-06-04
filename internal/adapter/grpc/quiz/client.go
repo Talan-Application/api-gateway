@@ -23,6 +23,7 @@ func (c *Client) CreateQuiz(ctx context.Context, req model.CreateQuizRequest) (*
 		Language:        req.Language,
 		Type:            req.Type,
 		CommonSubjectId: req.CommonSubjectID,
+		IsEntStandard:   req.IsEntStandard,
 	})
 	if err != nil {
 		return nil, err
@@ -78,10 +79,11 @@ func (c *Client) GetMyQuizzes(ctx context.Context, limit, offset *int32) (*model
 
 func (c *Client) UpdateQuiz(ctx context.Context, id int64, req model.UpdateQuizRequest) (*model.QuizResponse, error) {
 	resp, err := c.stub.UpdateQuiz(ctx, &quizv1.UpdateQuizRequest{
-		Id:       id,
-		Title:    req.Title,
-		Language: req.Language,
-		Type:     req.Type,
+		Id:            id,
+		Title:         req.Title,
+		Language:      req.Language,
+		Type:          req.Type,
+		IsEntStandard: req.IsEntStandard,
 	})
 	if err != nil {
 		return nil, err
@@ -99,14 +101,15 @@ func (c *Client) DeleteQuiz(ctx context.Context, id int64) (*model.DeleteQuizRes
 
 func toModel(q *quizv1.QuizResponse) *model.QuizResponse {
 	return &model.QuizResponse{
-		ID:        q.GetId(),
-		Title:     q.GetTitle(),
-		Language:  q.GetLanguage(),
-		AuthorID:  q.GetAuthorId(),
-		Status:    q.GetStatus(),
-		Type:      q.GetType(),
-		SubjectID: q.GetCommonSubjectId(),
-		CreatedAt: q.GetCreatedAt(),
-		UpdatedAt: q.GetUpdatedAt(),
+		ID:            q.GetId(),
+		Title:         q.GetTitle(),
+		Language:      q.GetLanguage(),
+		AuthorID:      q.GetAuthorId(),
+		Status:        q.GetStatus(),
+		Type:          q.GetType(),
+		SubjectID:     q.GetCommonSubjectId(),
+		IsEntStandard: q.GetIsEntStandard(),
+		CreatedAt:     q.GetCreatedAt(),
+		UpdatedAt:     q.GetUpdatedAt(),
 	}
 }

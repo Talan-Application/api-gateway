@@ -3,7 +3,7 @@ module github.com/Talan-Application/api-gateway
 go 1.25.5
 
 require (
-	github.com/Talan-Application/proto-generation v0.0.0-20260602150319-2b1b73283897
+	github.com/Talan-Application/proto-generation v0.0.0-20260604104718-e37bae99924a
 	github.com/gin-gonic/gin v1.12.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/joho/godotenv v1.5.1
