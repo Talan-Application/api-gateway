@@ -107,7 +107,7 @@ func toModel(q *quizv1.QuizResponse) *model.QuizResponse {
 		AuthorID:      q.GetAuthorId(),
 		Status:        q.GetStatus(),
 		Type:          q.GetType(),
-		SubjectID:     q.GetCommonSubjectId(),
+		CommonSubjectID: q.GetCommonSubjectId(),
 		IsEntStandard: q.GetIsEntStandard(),
 		CreatedAt:     q.GetCreatedAt(),
 		UpdatedAt:     q.GetUpdatedAt(),
