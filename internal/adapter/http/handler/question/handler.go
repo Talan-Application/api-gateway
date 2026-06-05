@@ -23,13 +23,13 @@ func NewHandler(questionUC usecase.Question, log *zap.Logger) *Handler {
 }
 
 func (h *Handler) Create(c *gin.Context) {
-	var req model.CreateQuestionRequest
+	var req model.CreateQuestionWithAnswersRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	resp, err := h.questionUC.CreateQuestion(c.Request.Context(), req)
+	resp, err := h.questionUC.CreateQuestionWithAnswers(c.Request.Context(), req)
 	if err != nil {
 		h.handleError(c, err)
 		return

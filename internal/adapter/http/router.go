@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
-	answerhandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/answer"
 	authhandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/auth"
 	commonsubjecthandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/common_subject"
 	questionhandler "github.com/Talan-Application/api-gateway/internal/adapter/http/handler/question"
@@ -13,7 +12,7 @@ import (
 	"github.com/Talan-Application/api-gateway/internal/usecase"
 )
 
-func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Auth, quizUC usecase.Quiz, questionUC usecase.Question, answerUC usecase.Answer, commonSubjectUC usecase.CommonSubject) *gin.Engine {
+func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Auth, quizUC usecase.Quiz, questionUC usecase.Question, commonSubjectUC usecase.CommonSubject) *gin.Engine {
 	if env != "development" {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -40,7 +39,6 @@ func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Aut
 
 	quiz := quizhandler.NewHandler(quizUC, log)
 	question := questionhandler.NewHandler(questionUC, log)
-	answer := answerhandler.NewHandler(answerUC, log)
 
 	quizGroup := protected.Group("/quizzes")
 	{
@@ -67,15 +65,6 @@ func NewRouter(env string, jwtSecret string, log *zap.Logger, authUC usecase.Aut
 		questionGroup.GET("/:id", question.GetByID)
 		questionGroup.PUT("/:id", question.Update)
 		questionGroup.DELETE("/:id", question.Delete)
-		questionGroup.GET("/:id/answers", answer.GetAll)
-	}
-
-	answerGroup := protected.Group("/answers", staffOnly)
-	{
-		answerGroup.POST("", answer.Create)
-		answerGroup.GET("/:id", answer.GetByID)
-		answerGroup.PUT("/:id", answer.Update)
-		answerGroup.DELETE("/:id", answer.Delete)
 	}
 
 	commonSubject := commonsubjecthandler.NewHandler(commonSubjectUC, log)
