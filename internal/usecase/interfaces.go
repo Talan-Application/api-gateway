@@ -28,19 +28,11 @@ type Quiz interface {
 }
 
 type Question interface {
-	CreateQuestion(ctx context.Context, req model.CreateQuestionRequest) (*model.QuestionResponse, error)
-	GetQuestion(ctx context.Context, id int64) (*model.QuestionResponse, error)
+	CreateQuestionWithAnswers(ctx context.Context, req model.CreateQuestionWithAnswersRequest) (*model.QuestionWithAnswersResponse, error)
+	GetQuestion(ctx context.Context, id int64) (*model.QuestionWithAnswersResponse, error)
 	GetAllQuestions(ctx context.Context, quizID int64, limit, offset *int32) (*model.GetAllQuestionsResponse, error)
-	UpdateQuestion(ctx context.Context, id int64, req model.UpdateQuestionRequest) (*model.QuestionResponse, error)
+	UpdateQuestion(ctx context.Context, id int64, req model.UpdateQuestionRequest) (*model.QuestionWithAnswersResponse, error)
 	DeleteQuestion(ctx context.Context, id int64) (*model.DeleteQuestionResponse, error)
-}
-
-type Answer interface {
-	CreateAnswer(ctx context.Context, req model.CreateAnswerRequest) (*model.AnswerResponse, error)
-	GetAnswer(ctx context.Context, id int64) (*model.AnswerResponse, error)
-	GetAllAnswers(ctx context.Context, questionID int64, limit, offset *int32) (*model.GetAllAnswersResponse, error)
-	UpdateAnswer(ctx context.Context, id int64, req model.UpdateAnswerRequest) (*model.AnswerResponse, error)
-	DeleteAnswer(ctx context.Context, id int64) (*model.DeleteAnswerResponse, error)
 }
 
 type CommonSubject interface {
