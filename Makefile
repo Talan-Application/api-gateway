@@ -6,15 +6,15 @@ BUILD_DIR = ./bin
 BINARY    = $(BUILD_DIR)/$(APP_NAME).exe
 MAIN      = ./cmd/
 
-.PHONY: all build run test test-verbose fmt tidy lint clean docker-build docker-run docker-stop help
+.PHONY: all build run test test-verbose fmt tidy lint clean docker-build docker-run docker-stop proto-update help
 
 all: build
 
 build:
 	New-Item -ItemType Directory -Force -Path $(BUILD_DIR) | Out-Null; go build -ldflags="-s -w" -o $(BINARY) $(MAIN)
 
-run: build
-	& $(BINARY)
+run:
+	go run $(MAIN)
 
 test:
 	go test ./...
@@ -27,6 +27,9 @@ fmt:
 
 tidy:
 	go mod tidy
+
+proto-update:
+	$$env:GOPROXY = "direct"; go get github.com/Talan-Application/proto-generation@master; go mod tidy
 
 lint:
 	golangci-lint run ./...
@@ -47,11 +50,12 @@ help:
 	Write-Host "Usage: make <target>"; \
 	Write-Host ""; \
 	Write-Host "  build          Build the binary to $(BINARY)"; \
-	Write-Host "  run            Run the service locally (uses .env)"; \
+	Write-Host "  run            Run the service locally (go run)"; \
 	Write-Host "  test           Run tests"; \
 	Write-Host "  test-verbose   Run tests with -v -race"; \
 	Write-Host "  fmt            Format source files"; \
 	Write-Host "  tidy           Run go mod tidy"; \
+	Write-Host "  proto-update   Fetch latest proto-generation module (GOPROXY=direct) and tidy"; \
 	Write-Host "  lint           Run golangci-lint"; \
 	Write-Host "  clean          Remove build artifacts"; \
 	Write-Host "  docker-build   Build Docker image"; \
